@@ -1,0 +1,25 @@
+{
+	"name": "sharemed-ledger-chaincode",
+	"version": "0.1.0",
+	"description": "",
+	"main": "lib/index.js",
+	"scripts": {
+		"start": "fabric-chaincode-node start",
+		"build": "rm -f tsconfig.tsbuildinfo && rm -rf lib/ && tsc",
+		"test": "mocha -r ts-node/register test/contract.test.ts --exit",
+		"prepublishOnly": "npm run build"
+	},
+	"author": "Bonfirium",
+	"license": "MIT",
+	"dependencies": {
+		"fabric-contract-api": "^1.4.2",
+		"fabric-shim": "^1.4.2",
+		"nl-marshal": "^0.1.0"
+	},
+	"devDependencies": {
+		"@types/mocha": "^5.2.7",
+		"mocha": "^6.2.2",
+		"ts-node": "^8.4.1",
+		"typescript": "^3.6.4"
+	}
+}
