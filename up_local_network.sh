@@ -80,3 +80,28 @@ docker-compose up -d \
 	cli.med-org2.sharemed-ledger.io \
 	cli.med-org3.sharemed-ledger.io
 
+pushd ./chaincode && npm install --silent && npm run build && popd
+
+for i in 1 2 3
+do docker exec \
+	-e "CORE_PEER_LOCALMSPID=MedOrg${i}MSP" \
+	-e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/med-org${i}.sharemed-ledger.io/users/Admin@med-org${i}.sharemed-ledger.io/msp" \
+	cli.med-org${i}.sharemed-ledger.io \
+	peer chaincode install -n $CHAINCODE_ID -v 0.1.0 -p "/opt/chaincode" -l node
+done
+
+docker exec \
+	-e "CORE_PEER_LOCALMSPID=MedOrg1MSP" \
+	-e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/med-org1.sharemed-ledger.io/users/Admin@med-org1.sharemed-ledger.io/msp" \
+	cli.med-org1.sharemed-ledger.io \
+	peer chaincode instantiate \
+		-o orderer.sharemed-ledger.io:7050 \
+		-C mainchannel \
+		-n $CHAINCODE_ID \
+		-l node \
+		-v 0.1.0 \
+		-c '{"Args":[]}' \
+		-P "OR('MedOrg1MSP.member', 'MedOrg2MSP.member', 'MedOrg3MSP.member')" \
+		--tls \
+		--cafile "/etc/hyperledger/fabric/tlsca.sharemed-ledger.io-cert.pem"
+
