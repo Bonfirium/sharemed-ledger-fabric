@@ -6,7 +6,7 @@
 	"scripts": {
 		"start": "fabric-chaincode-node start",
 		"build": "rm -f tsconfig.tsbuildinfo && rm -rf lib/ && tsc",
-		"test": "mocha -r ts-node/register test/contract.test.ts --exit",
+		"test": "mocha -r ts-node/register test/index.test.ts --exit",
 		"prepublishOnly": "npm run build"
 	},
 	"author": "Bonfirium",
@@ -17,8 +17,15 @@
 		"nl-marshal": "^0.1.0"
 	},
 	"devDependencies": {
+		"@types/fs-extra": "^8.0.1",
 		"@types/mocha": "^5.2.7",
+		"@types/node": "^12.11.7",
+		"@types/rimraf": "^2.0.3",
+		"fabric-ca-client": "^1.4.4",
+		"fabric-network": "^1.4.4",
+		"fs-extra": "^8.1.0",
 		"mocha": "^6.2.2",
+		"rimraf": "^3.0.0",
 		"ts-node": "^8.4.1",
 		"typescript": "^3.6.4"
 	}
