@@ -9,6 +9,11 @@ if [ ! -z "$DOCKER_CONTAINERS_TO_RM" ]
 then docker rm -f $DOCKER_CONTAINERS_TO_RM
 fi
 
+DOCKER_IMAGES_TO_RM=$(docker images -a | grep .sharemed-ledger.io | awk '{print $3}')
+if [ ! -z "$DOCKER_IMAGES_TO_RM" ]
+then docker rmi -f $DOCKER_IMAGES_TO_RM
+fi
+
 export MED_ORG1_CA_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/med-org1.sharemed-ledger.io/ca && ls *_sk)
 export MED_ORG2_CA_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/med-org1.sharemed-ledger.io/ca && ls *_sk)
 export MED_ORG3_CA_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/med-org1.sharemed-ledger.io/ca && ls *_sk)

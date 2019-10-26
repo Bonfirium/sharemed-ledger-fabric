@@ -1,13 +1,14 @@
 /// <reference path="../src/index.ts" />
 
 import * as FabricCAServices from "fabric-ca-client";
-import { FileSystemWallet, X509WalletMixin, Gateway } from "fabric-network";
+import { FileSystemWallet, X509WalletMixin, Gateway, Contract } from "fabric-network";
 import { mkdir, mkdirp } from "fs-extra";
 import * as path from "path";
 import rimrafWithCb from "rimraf";
 
-import { caServices, caConnectionProps } from "./_infrastructure";
-import organizations, { Organization, mspOf, ordererUrl } from "./_organizations";
+import { Organization, mspOf } from "./_organizations";
+import { caServices } from "./_infrastructure";
+import { getConnectionSettings } from "./_connectionSettings";
 import { inspect } from "util";
 
 export async function rimraf(path: string): Promise<void> {
@@ -48,10 +49,10 @@ export class Fabric {
 		return await caServices[this.organization].enroll({ enrollmentID, enrollmentSecret, profile: "tls" });
 	}
 
-	async import(enrollment: FabricCAServices.IEnrollResponse): Promise<void> {
+	async import(label: string, enrollment: FabricCAServices.IEnrollResponse): Promise<void> {
 		const msp = mspOf[this.organization];
 		const identity = X509WalletMixin.createIdentity(msp, enrollment.certificate, enrollment.key.toBytes());
-		await this.wallet.import('admin', identity);
+		await this.wallet.import(label, identity);
 	}
 
 	async connectGateway(label: string) {
@@ -60,19 +61,22 @@ export class Fabric {
 			identity: label,
 			discovery: { enabled: false },
 		};
-		const clientConfig = ;
+		const clientConfig = getConnectionSettings(this.organization);
 		console.log(inspect(clientConfig, false, null, true));
 		await this._gateway.connect(clientConfig, gatewaySettings);
 	}
 
-	async register(userId: string, affiliation: string) {
-		const ca = this._gateway.getClient().getCertificateAuthority();
+	async getContract(): Promise<Contract> {
+		const network = await this._gateway.getNetwork("mainchannel");
+		return network.getContract("sharemedchaincode");
+	}
+
+	async register(userId: string, affiliation: string): Promise<string> {
 		const adminIdentity = this._gateway.getCurrentIdentity();
-		const enrollmentSecret = await caServices[this.organization].register(
+		return await caServices[this.organization].register(
 			{ affiliation, enrollmentID: userId, role: 'client' },
 			adminIdentity,
 		);
-		return await ca.enroll({ enrollmentID: userId, enrollmentSecret });
 	}
 }
 

@@ -1,0 +1,59 @@
+{
+	"name": "network",
+	"version": "1.0.0",
+	"client": {
+		"organization": "MedOrg2",
+		"connection": {
+			"timeout": { "peer": { "endorser": "300" }, "orderer": "300" }
+		}
+	},
+	"channels": {
+		"mainchannel": {
+			"orderers": ["orderer.sharemed-ledger.io"],
+			"peers": {
+				"peer0.med-org1.sharemed-ledger.io": {},
+				"peer0.med-org2.sharemed-ledger.io": {},
+				"peer0.med-org3.sharemed-ledger.io": {}
+			}
+		}
+	},
+	"organizations": {
+		"MedOrg1": {
+			"mspid": "MedOrg1MSP",
+			"peers": ["peer0.med-org1.sharemed-ledger.io"],
+			"certificateAuthorities": ["ca.med-org1.sharemed-ledger.io"]
+		},
+		"MedOrg2": {
+			"mspid": "MedOrg2MSP",
+			"peers": ["peer0.med-org2.sharemed-ledger.io"],
+			"certificateAuthorities": ["ca.med-org2.sharemed-ledger.io"]
+		},
+		"MedOrg3": {
+			"mspid": "MedOrg3MSP",
+			"peers": ["peer0.med-org3.sharemed-ledger.io"],
+			"certificateAuthorities": ["ca.med-org3.sharemed-ledger.io"]
+		}
+	},
+	"orderers": {
+		"orderer.sharemed-ledger.io": { "url": "grpcs://localhost:37297" }
+	},
+	"peers": {
+		"peer0.med-org1.sharemed-ledger.io": { "url": "grpcs://localhost:37397" },
+		"peer0.med-org2.sharemed-ledger.io": { "url": "grpcs://localhost:37497" },
+		"peer0.med-org3.sharemed-ledger.io": { "url": "grpcs://localhost:37597" }
+	},
+	"certificateAuthorities": {
+		"ca.med-org1.sharemed-ledger.io": {
+			"url": "https://localhost:37400",
+			"caName": "ca.med-org1.sharemed-ledger.io"
+		},
+		"ca.med-org2.sharemed-ledger.io": {
+			"url": "https://localhost:37500",
+			"caName": "ca.med-org2.sharemed-ledger.io"
+		},
+		"ca.med-org3.sharemed-ledger.io": {
+			"url": "https://localhost:37600",
+			"caName": "ca.med-org3.sharemed-ledger.io"
+		}
+	}
+}

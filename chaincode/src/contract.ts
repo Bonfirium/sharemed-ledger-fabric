@@ -1,16 +1,16 @@
 import { Contract, Context } from "fabric-contract-api";
-import { ISerializer, varuint, string, InputOf, OutputOf } from "nl-marshal";
+import { ISerializer, string, InputOf, OutputOf, empty } from "nl-marshal";
 
 export enum METHOD {
-	TEST = 'test',
+	GET_USER_ID = 'getUserId',
 }
 
 export const args: { [method in METHOD]: ISerializer } = {
-	[METHOD.TEST]: varuint,
+	[METHOD.GET_USER_ID]: empty,
 };
 
 export const outputs: { [method in METHOD]: ISerializer } = {
-	[METHOD.TEST]: string,
+	[METHOD.GET_USER_ID]: string,
 };
 
 export type IShareMedLedgerContract = { [method in METHOD]: (ctx: Context, arg: string) => Promise<string> };
@@ -29,8 +29,7 @@ export default class ShareMedLedgerContract extends Contract implements IShareMe
 		return output_t.parse(output_s);
 	}
 
-	async [METHOD.TEST](_: Context, input_s: string): Promise<string> {
-		const input = varuint.parse(input_s);
-		return varuint.stringify(input.plus(1));
+	async [METHOD.GET_USER_ID](ctx: Context, _: string): Promise<string> {
+		return string.stringify(ctx.clientIdentity.getX509Certificate().subject.commonName);
 	}
 }

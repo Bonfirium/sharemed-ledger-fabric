@@ -1,5 +1,5 @@
 import FabricCAServices = require("fabric-ca-client");
-import organizations, { Organization, urlOf } from "./_organizations";
+import organizations, { Organization } from "./_organizations";
 
 export type CAServicesUrlMap = { [organization in Organization]: string };
 
