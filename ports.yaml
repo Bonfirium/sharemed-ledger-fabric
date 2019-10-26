@@ -1,0 +1,20 @@
+Peers:
+  Orderer: 37297
+  MedOrg1: 37397
+  MedOrg2: 37497
+  MedOrg3: 37597
+
+CouchDB:
+  MedOrg1: 37398
+  MedOrg2: 37498
+  MedOrg3: 37598
+
+PeersChaincodes:
+  MedOrg1: 37399
+  MedOrg2: 37499
+  MedOrg3: 37599
+
+CertificateAuthorities:
+  MedOrg1: 37400
+  MedOrg2: 37500
+  MedOrg3: 37600

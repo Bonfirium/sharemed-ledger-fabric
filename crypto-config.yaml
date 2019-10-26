@@ -1,0 +1,22 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: sharemed-ledger.io
+    EnableNodeOUs: true
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: MedOrg1
+    Domain: med-org1.sharemed-ledger.io
+    Template:
+      Count: 1
+
+  - Name: MedOrg2
+    Domain: med-org2.sharemed-ledger.io
+    Template:
+      Count: 1
+
+  - Name: MedOrg3
+    Domain: med-org3.sharemed-ledger.io
+    Template:
+      Count: 1

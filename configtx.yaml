@@ -1,0 +1,165 @@
+Organizations:
+  - &OrdererOrg
+    Name: Orderer
+    ID: OrdererMSP
+    MSPDir: crypto-config/ordererOrganizations/sharemed-ledger.io/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('OrdererMSP.admin')"
+
+  - &MedOrg1
+    Name: MedOrg1
+    ID: MedOrg1MSP
+    MSPDir: crypto-config/peerOrganizations/med-org1.sharemed-ledger.io/msp
+    AnchorPeers:
+      - Host: peer0.med-org1.sharedmed-ledger.io
+        Port: 7051
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('MedOrg1MSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('MedOrg1MSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('MedOrg1MSP.admin')"
+
+  - &MedOrg2
+    Name: MedOrg2
+    ID: MedOrg2MSP
+    MSPDir: crypto-config/peerOrganizations/med-org2.sharemed-ledger.io/msp
+    AnchorPeers:
+      - Host: peer0.med-org2.sharemed-ledger.io
+        Port: 7051
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('MedOrg2MSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('MedOrg2MSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('MedOrg2MSP.admin')"
+
+  - &MedOrg3
+    Name: MedOrg3
+    ID: MedOrg3MSP
+    MSPDir: crypto-config/peerOrganizations/med-org3.sharemed-ledger.io/msp
+    AnchorPeers:
+      - Host: peer0.med-org3.sharemed-ledger.io
+        Port: 7051
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('MedOrg3MSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('MedOrg3MSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('MedOrg3MSP.admin')"
+
+Capabilities:
+  Channel: &ChannelCapabilities
+    V1_4_3: true
+    V1_3: false
+    V1_1: false
+  Orderer: &OrdererCapabilities
+    V1_4_2: true
+    V1_1: false
+  Application: &ApplicationCapabilities
+    V1_4_3: true
+    V1_3: false
+    V1_2: false
+    V1_1: false
+
+Application: &ApplicationDefaults
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "ANY Admins"
+
+Orderer: &OrdererDefaults
+  OrdererType: solo
+  Addresses:
+    - orderer.sharemed-ledger.io:7050
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Organizations:
+  Kafka:
+    Brokers:
+      - 127.0.0.1:9092
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+
+Profiles:
+  OrdererGenesis:
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *OrdererOrg
+    Consortiums:
+      SampleConsortium:
+        Organizations:
+          - *MedOrg1
+          - *MedOrg2
+          - *MedOrg3
+    Policies:
+      Readers:
+        Type: ImplicitMeta
+        Rule: "ANY Readers"
+      Writers:
+        Type: ImplicitMeta
+        Rule: "ANY Writers"
+      Admins:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Admins"
+
+  MainChannel:
+    Consortium: SampleConsortium
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *MedOrg1
+        - *MedOrg2
+        - *MedOrg3
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('MedOrg1MSP.member', 'MedOrg2MSP.member', 'MedOrg3MSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('MedOrg1MSP.member', 'MedOrg2MSP.member', 'MedOrg3MSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('MedOrg1MSP.admin', 'MedOrg2MSP.admin', 'MedOrg3MSP.admin')"
