@@ -27,3 +27,10 @@ export const mspOf: { [key in Organization]: MSPOfOrganization<key> } = {
 }
 
 export const organizations = [Organization.AuthOrg, Organization.MedOrg1, Organization.MedOrg2, Organization.MedOrg3];
+
+export const collectionOfMSP: { [org in OrganizationMSP]: string | null } = {
+	[OrganizationMSP.AuthOrg]: null,
+	[OrganizationMSP.MedOrg1]: "medOrg1Collection",
+	[OrganizationMSP.MedOrg2]: null,
+	[OrganizationMSP.MedOrg3]: null,
+};
