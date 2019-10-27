@@ -3,8 +3,8 @@ import * as bs58 from "bs58";
 import { randomBytes } from "crypto";
 import { Contract } from "fabric-network";
 import "mocha";
-import { empty } from "nl-marshal";
-import { METHOD, Organization } from "../src";
+import { empty, InputOf, BigNumber } from "nl-marshal";
+import { METHOD, Organization, args, outputs, mspOf } from "../src";
 import { accountId, linkApprove } from "../src/types";
 import { Fabric, Unpromisify } from "./_utils";
 
@@ -99,6 +99,44 @@ describe.only("flow", () => {
 		it("import", () => medOrg1DoctorFabric.import(medOrg1DoctorId, enrollment));
 		it("connection to gateway", () => medOrg1DoctorFabric.connectGateway(medOrg1DoctorId));
 		it("get contract", async () => medOrg1DoctorContract = await medOrg1DoctorFabric.getContract());
+	});
+
+	describe("MedOrg1 create document", () => {
+		const document = {
+			hash: randomBytes(34),
+			cipherKey: randomBytes(24),
+			accountId: medOrg1UserId,
+		};
+		let docId: BigNumber;
+		it("should succeed", async () => {
+			docId = await medOrg1DoctorContract.createTransaction(METHOD.ADD_DOCUMENT)
+				.submit(args[METHOD.ADD_DOCUMENT].stringify(document))
+				.then((res) => outputs[METHOD.ADD_DOCUMENT].parse(res));
+		}).timeout(10e3);
+		it("documents count should increase", async () => {
+			const documentsCount = await medOrg1DoctorContract.evaluateTransaction(METHOD.GET_DOCUMENTS_COUNT)
+				.then((res) => outputs[METHOD.GET_DOCUMENTS_COUNT].parse(res));
+			ok(documentsCount.eq(docId.plus(1)));
+		});
+		it("returns partial document for AuthOrg", async () => {
+			const arg = args[METHOD.GET_DOCUMENT].stringify(docId);
+			const docRes = await authOrgUserContract.evaluateTransaction(METHOD.GET_DOCUMENT, arg)
+				.then((res) => outputs[METHOD.GET_DOCUMENT].parse(res));
+			ok(docRes.accountId.equals(bs58.decode(authOrgUserId)));
+			ok(docRes.ownerMSP === mspOf[Organization.MedOrg1]);
+			ok(docRes.collection === null);
+		});
+		it("returns full document for MedOrg1 doctor", async () => {
+			await new Promise((resolve) => setTimeout(() => resolve(), 5e3));
+			const arg = args[METHOD.GET_DOCUMENT].stringify(docId);
+			const docRes = await medOrg1DoctorContract.evaluateTransaction(METHOD.GET_DOCUMENT, arg)
+				.then((res) => outputs[METHOD.GET_DOCUMENT].parse(res));
+			ok(docRes.accountId.equals(bs58.decode(authOrgUserId)));
+			ok(docRes.ownerMSP === mspOf[Organization.MedOrg1]);
+			if (docRes.collection === null) throw new Error("no collection returns");
+			ok(docRes.collection.hash.equals(document.hash));
+			ok(docRes.collection.cipherKey.equals(document.cipherKey));
+		}).timeout(8e3);
 	});
 
 });

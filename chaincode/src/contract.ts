@@ -75,15 +75,20 @@ export default class ShareMedLedgerContract extends Contract implements IShareMe
 
 	async [METHOD.GET_ORIGIN](ctx: Context, input: string): Promise<string> {
 		const remote = types.accountId.parse(input);
-		const organization = ctx.clientIdentity.getMSPID();
-		ok(organization !== Organization.AuthOrg);
+		const msp = ctx.clientIdentity.getMSPID();
+		ok(msp !== mspOf[Organization.AuthOrg], `unable to get origin from ${msp}`);
 		const remote_j = types.accountId.toJSON(remote);
-		const request_b = await ctx.stub.getState(KEY.LINK_ACCOUNT(organization, remote_j));
+		const request_b = await ctx.stub.getState(KEY.LINK_ACCOUNT(msp, remote_j));
 		const x509 = ctx.clientIdentity.getX509Certificate();
-		ok(x509.subject.commonName === remote_j || x509.subject.organizationalUnitName === doctorOrgUnit);
+		const clientId = x509.subject.commonName;
+		const isRemote = clientId === remote_j;
+		const orgUnitName = x509.subject.organizationalUnitName;
+		const isDoctor = orgUnitName === doctorOrgUnit;
+		// TODO: change error message
+		ok(isRemote || isDoctor, `permission denied: isRemote ${isRemote}(${clientId}=${remote_j}), isDoctor: ${isDoctor}(${orgUnitName}=${doctorOrgUnit})`);
 		ok(request_b !== undefined && request_b.length !== 0, "account link not found");
 		const { origin, approved } = types.accountLink.fromBuffer(request_b);
-		ok(approved);
+		ok(approved, "is not approved");
 		return types.accountId.stringify(origin);
 	}
 
@@ -120,7 +125,7 @@ export default class ShareMedLedgerContract extends Contract implements IShareMe
 	async [METHOD.ADD_DOCUMENT](ctx: Context, input: string): Promise<string> {
 		const { accountId, cipherKey, hash } = types.addDocumentRequest.parse(input);
 		const msp = ctx.clientIdentity.getMSPID() as OrganizationMSP;
-		ok(msp !== mspOf[Organization.AuthOrg]);
+		ok(msp !== mspOf[Organization.AuthOrg], `msp equals to AuthOrg msp (${msp})`);
 		const [origin, documentsCount] = await Promise.all([
 			this._exec(ctx, METHOD.GET_ORIGIN, accountId),
 			this._exec(ctx, METHOD.GET_DOCUMENTS_COUNT, null),

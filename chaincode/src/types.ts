@@ -8,9 +8,9 @@ export const addDocumentRequest = struct({
 	hash: bytes({ encoding: Encoding.BASE_58, length: 34 }),
 	cipherKey: bytes({ encoding: Encoding.BASE_58, length: 24 }),
 });
-export const document_t = struct({ accountId, ownerMSP: chars });
+export const document = struct({ accountId, ownerMSP: chars });
 export const collectionDocument = struct({
 	hash: addDocumentRequest.serializers.hash,
 	cipherKey: addDocumentRequest.serializers.cipherKey,
 });
-export const documentResult = extended(document_t, { collection: optional(collectionDocument) });
+export const documentResult = extended(document, { collection: optional(collectionDocument) });

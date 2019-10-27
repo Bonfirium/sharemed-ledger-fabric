@@ -4,6 +4,8 @@ set -ev
 export CHAINCODE_ID=sharemedchaincode
 export COMPOSE_PROJECT_NAME=fabric
 
+docker rm -f distracted_leavitt adoring_newton trusting_morse
+
 DOCKER_CONTAINERS_TO_RM=$(docker ps -a | grep .sharemed-ledger.io | awk '{print $1}')
 if [ ! -z "$DOCKER_CONTAINERS_TO_RM" ]
 then docker rm -f $DOCKER_CONTAINERS_TO_RM
