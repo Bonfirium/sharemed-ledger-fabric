@@ -95,7 +95,7 @@ Capabilities:
     V1_4_2: true
     V1_1: false
   Application: &ApplicationCapabilities
-    V1_4_3: true
+    V1_4_2: true
     V1_3: false
     V1_2: false
     V1_1: false
@@ -142,10 +142,14 @@ Orderer: &OrdererDefaults
 
 Profiles:
   OrdererGenesis:
+    Capabilities:
+      <<: *ChannelCapabilities
     Orderer:
       <<: *OrdererDefaults
       Organizations:
         - *OrdererOrg
+      Capabilities:
+        <<: *OrdererCapabilities
     Consortiums:
       SampleConsortium:
         Organizations:
@@ -165,6 +169,8 @@ Profiles:
         Rule: "MAJORITY Admins"
 
   MainChannel:
+    Capabilities:
+      <<: *ChannelCapabilities
     Consortium: SampleConsortium
     Application:
       <<: *ApplicationDefaults
@@ -173,6 +179,8 @@ Profiles:
         - *MedOrg1
         - *MedOrg2
         - *MedOrg3
+      Capabilities:
+        <<: *ApplicationCapabilities
     Policies:
       Readers:
         Type: Signature

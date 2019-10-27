@@ -120,5 +120,6 @@ docker exec \
 		-c '{"Args":[]}' \
 		-P "OR('AuthOrgMSP.member', 'MedOrg1MSP.member', 'MedOrg2MSP.member', 'MedOrg3MSP.member')" \
 		--tls \
-		--cafile "/etc/hyperledger/fabric/tlsca.sharemed-ledger.io-cert.pem"
+		--cafile "/etc/hyperledger/fabric/tlsca.sharemed-ledger.io-cert.pem" \
+		--collections-config "/opt/gopath/src/github.com/hyperledger/fabric/peer/collections_config.json"
 

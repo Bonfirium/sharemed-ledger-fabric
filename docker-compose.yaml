@@ -358,6 +358,7 @@ services:
       - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
       - ./config:/etc/hyperledger/configtx
       - ./crypto-config/ordererOrganizations/sharemed-ledger.io/msp/tlscacerts/tlsca.sharemed-ledger.io-cert.pem:/etc/hyperledger/fabric/tlsca.sharemed-ledger.io-cert.pem
+      - ./chaincode/collections_config.json:/opt/gopath/src/github.com/hyperledger/fabric/peer/collections_config.json
     networks:
       - sharemed-ledger.io
 
