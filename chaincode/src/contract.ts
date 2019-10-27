@@ -41,6 +41,8 @@ const KEY = {
 	DOCUMENT: (key: BigNumber): string => `DOCUMENT_${key.toString(10)}`,
 };
 
+const doctorOrgUnit = "department2";
+
 export type IShareMedLedgerContract = { [method in METHOD]: (ctx: Context, arg: string) => Promise<string> };
 
 export default class ShareMedLedgerContract extends Contract implements IShareMedLedgerContract {
@@ -72,8 +74,10 @@ export default class ShareMedLedgerContract extends Contract implements IShareMe
 		const remote = accountId.parse(input);
 		const organization = ctx.clientIdentity.getMSPID();
 		ok(organization !== Organization.AuthOrg);
-		const request_b = await ctx.stub.getState(KEY.LINK_ACCOUNT(organization, accountId.toJSON(remote)));
-		// FIXME: only by doctor or remote
+		const remote_j = accountId.toJSON(remote);
+		const request_b = await ctx.stub.getState(KEY.LINK_ACCOUNT(organization, remote_j));
+		const x509 = ctx.clientIdentity.getX509Certificate();
+		ok(x509.subject.commonName === remote_j || x509.subject.organizationalUnitName === doctorOrgUnit);
 		ok(request_b !== undefined && request_b.length !== 0, "account link not found");
 		const { origin, approved } = accountLink.fromBuffer(request_b);
 		ok(approved);
