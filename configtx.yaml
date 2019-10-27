@@ -14,6 +14,24 @@ Organizations:
         Type: Signature
         Rule: "OR('OrdererMSP.admin')"
 
+  - &AuthOrg
+    Name: AuthOrg
+    ID: AuthOrgMSP
+    MSPDir: crypto-config/peerOrganizations/auth-org.sharemed-ledger.io/msp
+    AnchorPeers:
+      - Host: peer0.auth-org.sharedmed-ledger.io
+        Port: 7051
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('AuthOrgMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('AuthOrgMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('AuthOrgMSP.admin')"
+
   - &MedOrg1
     Name: MedOrg1
     ID: MedOrg1MSP
@@ -131,6 +149,7 @@ Profiles:
     Consortiums:
       SampleConsortium:
         Organizations:
+          - *AuthOrg
           - *MedOrg1
           - *MedOrg2
           - *MedOrg3
@@ -150,16 +169,17 @@ Profiles:
     Application:
       <<: *ApplicationDefaults
       Organizations:
+        - *AuthOrg
         - *MedOrg1
         - *MedOrg2
         - *MedOrg3
     Policies:
       Readers:
         Type: Signature
-        Rule: "OR('MedOrg1MSP.member', 'MedOrg2MSP.member', 'MedOrg3MSP.member')"
+        Rule: "OR('AuthOrgMSP.member', 'MedOrg1MSP.member', 'MedOrg2MSP.member', 'MedOrg3MSP.member')"
       Writers:
         Type: Signature
-        Rule: "OR('MedOrg1MSP.member', 'MedOrg2MSP.member', 'MedOrg3MSP.member')"
+        Rule: "OR('AuthOrgMSP.member', 'MedOrg1MSP.member', 'MedOrg2MSP.member', 'MedOrg3MSP.member')"
       Admins:
         Type: Signature
-        Rule: "OR('MedOrg1MSP.admin', 'MedOrg2MSP.admin', 'MedOrg3MSP.admin')"
+        Rule: "OR('AuthOrgMSP.admin', 'MedOrg1MSP.admin', 'MedOrg2MSP.admin', 'MedOrg3MSP.admin')"

@@ -6,6 +6,11 @@ OrdererOrgs:
       - Hostname: orderer
 
 PeerOrgs:
+  - Name: AuthOrg
+    Domain: auth-org.sharemed-ledger.io
+    Template:
+      Count: 1
+
   - Name: MedOrg1
     Domain: med-org1.sharemed-ledger.io
     Template:

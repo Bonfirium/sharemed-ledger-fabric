@@ -12,6 +12,12 @@ bin/configtxgen -profile OrdererGenesis -outputBlock ./config/genesis.block -cha
 
 bin/configtxgen -profile MainChannel -outputCreateChannelTx ./config/mainchannel.tx -channelID mainchannel
 
+bin/configtxgen \
+	-profile MainChannel \
+	-outputAnchorPeersUpdate ./config/auth_org_msp_anchors.tx \
+	-channelID mainchannel \
+	-asOrg AuthOrg
+
 for i in 1 2 3
 do bin/configtxgen \
 	-profile MainChannel \

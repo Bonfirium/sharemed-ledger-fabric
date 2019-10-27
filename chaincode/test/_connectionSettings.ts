@@ -5,12 +5,14 @@ import { Organization, mspOf, organizations } from "../src";
 const rootPath = path.resolve(__dirname, '../..');
 
 const anchorPeerOf: { [org in Organization]: string } = {
+	[Organization.AuthOrg]: "peer0.auth-org.sharemed-ledger.io",
 	[Organization.MedOrg1]: "peer0.med-org1.sharemed-ledger.io",
 	[Organization.MedOrg2]: "peer0.med-org2.sharemed-ledger.io",
 	[Organization.MedOrg3]: "peer0.med-org3.sharemed-ledger.io",
 };
 
 const caOf: { [org in Organization]: string } = {
+	[Organization.AuthOrg]: "ca.auth-org.sharemed-ledger.io",
 	[Organization.MedOrg1]: "ca.med-org1.sharemed-ledger.io",
 	[Organization.MedOrg2]: "ca.med-org2.sharemed-ledger.io",
 	[Organization.MedOrg3]: "ca.med-org3.sharemed-ledger.io",
@@ -68,9 +70,10 @@ function checkCertificatePEM(str: string) {
 }
 
 const peersSettings: ConnectionSettings['peers'] = {
-	[anchorPeerOf[Organization.MedOrg1]]: { url: "grpcs://localhost:37397" },
-	[anchorPeerOf[Organization.MedOrg2]]: { url: "grpcs://localhost:37497" },
-	[anchorPeerOf[Organization.MedOrg3]]: { url: "grpcs://localhost:37597" },
+	[anchorPeerOf[Organization.AuthOrg]]: { url: "grpcs://localhost:37397" },
+	[anchorPeerOf[Organization.MedOrg1]]: { url: "grpcs://localhost:37497" },
+	[anchorPeerOf[Organization.MedOrg2]]: { url: "grpcs://localhost:37597" },
+	[anchorPeerOf[Organization.MedOrg3]]: { url: "grpcs://localhost:37697" },
 };
 
 function getTlsOfPeer(orgShort: string) {
@@ -83,6 +86,7 @@ function getTlsOfPeer(orgShort: string) {
 }
 
 const anchorPeerTlsPemOfOrganization: { [org in Organization]: string } = {
+	[Organization.AuthOrg]: getTlsOfPeer("auth-org"),
 	[Organization.MedOrg1]: getTlsOfPeer("med-org1"),
 	[Organization.MedOrg2]: getTlsOfPeer("med-org2"),
 	[Organization.MedOrg3]: getTlsOfPeer("med-org3"),
@@ -133,6 +137,7 @@ export function getConnectionSettings(organization: Organization): ConnectionSet
 			mainchannel: {
 				orderers: [ordererId],
 				peers: {
+					[anchorPeerOf[Organization.AuthOrg]]: {},
 					[anchorPeerOf[Organization.MedOrg1]]: {},
 					[anchorPeerOf[Organization.MedOrg2]]: {},
 					[anchorPeerOf[Organization.MedOrg3]]: {},
@@ -140,6 +145,11 @@ export function getConnectionSettings(organization: Organization): ConnectionSet
 			},
 		},
 		organizations: {
+			[Organization.AuthOrg]: {
+				mspid: mspOf[Organization.AuthOrg],
+				peers: [anchorPeerOf[Organization.AuthOrg]],
+				certificateAuthorities: [caOf[Organization.AuthOrg]],
+			},
 			[Organization.MedOrg1]: {
 				mspid: mspOf[Organization.MedOrg1],
 				peers: [anchorPeerOf[Organization.MedOrg1]],
@@ -159,9 +169,10 @@ export function getConnectionSettings(organization: Organization): ConnectionSet
 		orderers: orderersSettings,
 		peers: peersSettings,
 		certificateAuthorities: {
-			[caOf[Organization.MedOrg1]]: { url: "https://localhost:37400", caName: caOf[Organization.MedOrg1] },
-			[caOf[Organization.MedOrg2]]: { url: "https://localhost:37500", caName: caOf[Organization.MedOrg2] },
-			[caOf[Organization.MedOrg3]]: { url: "https://localhost:37600", caName: caOf[Organization.MedOrg3] },
+			[caOf[Organization.AuthOrg]]: { url: "https://localhost:37400", caName: caOf[Organization.AuthOrg] },
+			[caOf[Organization.MedOrg1]]: { url: "https://localhost:37500", caName: caOf[Organization.MedOrg1] },
+			[caOf[Organization.MedOrg2]]: { url: "https://localhost:37600", caName: caOf[Organization.MedOrg2] },
+			[caOf[Organization.MedOrg3]]: { url: "https://localhost:37700", caName: caOf[Organization.MedOrg3] },
 		},
 	};
 }

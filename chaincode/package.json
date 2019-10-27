@@ -14,7 +14,7 @@
 	"dependencies": {
 		"fabric-contract-api": "^1.4.2",
 		"fabric-shim": "^1.4.2",
-		"nl-marshal": "^0.1.0"
+		"nl-marshal": "^0.2.0-rc.3"
 	},
 	"devDependencies": {
 		"@types/bs58": "^4.0.0",

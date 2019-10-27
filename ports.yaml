@@ -1,20 +1,24 @@
 Peers:
   Orderer: 37297
-  MedOrg1: 37397
-  MedOrg2: 37497
-  MedOrg3: 37597
+  AuthOrg: 37397
+  MedOrg1: 37497
+  MedOrg2: 37597
+  MedOrg3: 37697
 
 CouchDB:
-  MedOrg1: 37398
-  MedOrg2: 37498
-  MedOrg3: 37598
+  AuthOrg: 37398
+  MedOrg1: 37498
+  MedOrg2: 37598
+  MedOrg3: 37698
 
 PeersChaincodes:
-  MedOrg1: 37399
-  MedOrg2: 37499
-  MedOrg3: 37599
+  AuthOrg: 37399
+  MedOrg1: 37499
+  MedOrg2: 37599
+  MedOrg3: 37699
 
 CertificateAuthorities:
-  MedOrg1: 37400
-  MedOrg2: 37500
-  MedOrg3: 37600
+  AuthOrg: 37400
+  MedOrg1: 37500
+  MedOrg2: 37600
+  MedOrg3: 37700

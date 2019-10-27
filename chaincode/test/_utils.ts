@@ -6,10 +6,10 @@ import { mkdir, mkdirp } from "fs-extra";
 import * as path from "path";
 import rimrafWithCb from "rimraf";
 
-import { Organization, mspOf } from "./_organizations";
 import { caServices } from "./_infrastructure";
 import { getConnectionSettings } from "./_connectionSettings";
 import { inspect } from "util";
+import { mspOf, Organization } from "../src";
 
 export async function rimraf(path: string): Promise<void> {
 	await new Promise((resolve, reject) => rimrafWithCb(path, (error) => {
@@ -62,7 +62,7 @@ export class Fabric {
 			discovery: { enabled: false },
 		};
 		const clientConfig = getConnectionSettings(this.organization);
-		console.log(inspect(clientConfig, false, null, true));
+		// console.log(inspect(clientConfig, false, null, true));
 		await this._gateway.connect(clientConfig, gatewaySettings);
 	}
 

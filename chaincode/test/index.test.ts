@@ -1,8 +1,8 @@
 import "mocha";
-import { Organization } from "./_organizations";
 import { clearWallets, Fabric, Unpromisify } from "./_utils";
 import { randomBytes } from "crypto";
 import { loadCertificates } from "./_connectionSettings";
+import { Organization } from "../src";
 
 let fabric: Fabric;
 
