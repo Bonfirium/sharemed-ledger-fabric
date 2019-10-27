@@ -86,4 +86,19 @@ describe.only("flow", () => {
 		});
 	});
 
+	const medOrg1DoctorId = bs58.encode(randomBytes(32));
+	const medOrg1DoctorFabric = new Fabric(Organization.MedOrg1);
+	let medOrg1DoctorContract: Contract;
+	describe("MedOrg1 doctor registration", () => {
+		let enrollment: Enrolling;
+		let password: string;
+		it("registration", async () => {
+			password = await medOrg1AdminFabric.register(medOrg1DoctorId, "org1.department2");
+		});
+		it("enroll", async () => enrollment = await medOrg1DoctorFabric.enroll(medOrg1DoctorId, password));
+		it("import", () => medOrg1DoctorFabric.import(medOrg1DoctorId, enrollment));
+		it("connection to gateway", () => medOrg1DoctorFabric.connectGateway(medOrg1DoctorId));
+		it("get contract", async () => medOrg1DoctorContract = await medOrg1DoctorFabric.getContract());
+	});
+
 });
